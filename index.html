@@ -1,0 +1,344 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<style>:root{--color-primary:#021835;}</style>
+<meta http-equiv="x-ua-compatible" content="ie=edge">
+<meta name="HandheldFriendly" content="True">
+<meta name="viewport" content="width=device-width, initial-scale=1", shrink-to-fit=no>
+<meta name="description" content="Using basic body measurements, usually your bust size (the largest area of your chest) and band size (underbust), a bra size calculator is an online application that helps you find your exact bra size.">
+<title>Bra Size Calculator</title>
+<link rel="canonical" href="https://brasizecalculators.github.io/">
+<meta name="robots" content="index, follow" />
+<meta name="keywords" content="Bra size calculator, calculate bra size">
+
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background-color: #f9f0f5;
+            margin: 0;
+            padding: 5px;
+        }
+
+        .calculator-container {
+            max-width: 600px;
+            margin: 0 auto;
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+        }
+
+        h1 {
+            color: #d63384;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .input-section {
+            margin-bottom: 30px;
+        }
+
+        .input-group {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: bold;
+            color: #555;
+        }
+
+        input {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 16px;
+        }
+
+        button {
+            background-color: #d63384;
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            width: 100%;
+            transition: background-color 0.3s;
+        }
+
+        button:hover {
+            background-color: #b52b6f;
+        }
+
+        .result-section {
+            display: none;
+            padding: 20px;
+            background-color: #fef6fa;
+            border-radius: 5px;
+        }
+
+        .size-results {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin: 20px 0;
+        }
+
+        .size-system {
+            background: white;
+            padding: 15px;
+            border-radius: 5px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+
+        .system-name {
+            font-weight: bold;
+            color: #d63384;
+            margin-bottom: 5px;
+        }
+
+        .system-size {
+            font-size: 20px;
+            font-weight: bold;
+        }
+
+        .sizing-tips {
+            text-align: left;
+            margin-top: 30px;
+            padding: 15px;
+            background-color: #f0e6eb;
+            border-radius: 5px;
+        }
+
+        .sizing-tips h3 {
+            color: #d63384;
+            margin-top: 0;
+        }
+
+        .sizing-tips ul {
+            padding-left: 20px;
+        }
+
+        .sizing-tips li {
+            margin-bottom: 8px;
+        }
+
+        @media (max-width: 480px) {
+            .calculator-container {
+                padding: 20px;
+            }
+
+            h1 {
+                font-size: 24px;
+            }
+
+            .size-results {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="calculator-container">
+        <h1>International Bra Size Calculator</h1>
+        <div class="input-section">
+            <div class="input-group">
+                <label for="underbust">Underbust Measurement (inches):</label>
+                <input type="number" id="underbust" min="20" max="60" step="0.5" placeholder="e.g. 32.5">
+            </div>
+            <div class="input-group">
+                <label for="bust">Bust Measurement (inches):</label>
+                <input type="number" id="bust" min="20" max="60" step="0.5" placeholder="e.g. 36">
+            </div>
+            <button id="calculate-btn">Calculate Size</button>
+        </div>
+        <div class="result-section" id="result">
+            <h2>Your Bra Sizes:</h2>
+            <div class="size-results" id="size-results">
+                <!-- Results will be inserted here by JavaScript -->
+            </div>
+            <div class="sizing-tips">
+                <h3>Sizing Tips</h3>
+                <ul>
+                    <li>Measure snugly but not too tight under your bust for band size</li>
+                    <li>Measure around the fullest part of your bust without compressing</li>
+                    <li>Wear a non-padded bra when measuring for most accurate results</li>
+                    <li>Different brands may vary - these are approximate sizes</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.getElementById('calculate-btn').addEventListener('click', function() {
+            // Get input values
+            const underbust = parseFloat(document.getElementById('underbust').value);
+            const bust = parseFloat(document.getElementById('bust').value);
+
+            // Validate inputs
+            if (isNaN(underbust) || isNaN(bust) || underbust <= 0 || bust <= 0) {
+                alert('Please enter valid measurements in inches');
+                return;
+            }
+
+            if (bust <= underbust) {
+                alert('Bust measurement should be larger than underbust measurement');
+                return;
+            }
+
+            // Calculate band size (round to nearest even number)
+            let bandSize = Math.round(underbust);
+            if (bandSize % 2 !== 0) {
+                // If odd number, round to nearest even (up or down)
+                const lowerEven = bandSize - 1;
+                const upperEven = bandSize + 1;
+                bandSize = (underbust - lowerEven < upperEven - underbust) ? lowerEven : upperEven;
+            }
+
+            // Calculate cup size difference
+            const difference = bust - bandSize;
+
+            // Calculate sizes for different systems
+            const sizes = calculateInternationalSizes(bandSize, difference);
+
+            // Display results
+            displayResults(sizes);
+
+            // Show result section
+            document.getElementById('result').style.display = 'block';
+
+            // Scroll to result
+            document.getElementById('result').scrollIntoView({ behavior: 'smooth' });
+        });
+
+        function calculateInternationalSizes(bandSize, difference) {
+            // Determine cup letter based on difference
+            let usCup, ukCup, euCup, frCup, auCup;
+
+            if (difference < 0.5) {
+                usCup = ukCup = 'AA';
+                euCup = frCup = auCup = 'AA';
+            } else if (difference < 1.5) {
+                usCup = ukCup = 'A';
+                euCup = frCup = auCup = 'A';
+            } else if (difference < 2.5) {
+                usCup = ukCup = 'B';
+                euCup = frCup = auCup = 'B';
+            } else if (difference < 3.5) {
+                usCup = ukCup = 'C';
+                euCup = frCup = auCup = 'C';
+            } else if (difference < 4.5) {
+                usCup = ukCup = 'D';
+                euCup = frCup = auCup = 'D';
+            } else if (difference < 5.5) {
+                usCup = 'DD';
+                ukCup = 'DD';
+                euCup = 'E';
+                frCup = 'E';
+                auCup = 'DD';
+            } else if (difference < 6.5) {
+                usCup = 'DDD';
+                ukCup = 'E';
+                euCup = 'F';
+                frCup = 'F';
+                auCup = 'E';
+            } else if (difference < 7.5) {
+                usCup = 'G';
+                ukCup = 'F';
+                euCup = 'G';
+                frCup = 'G';
+                auCup = 'F';
+            } else if (difference < 8.5) {
+                usCup = 'H';
+                ukCup = 'FF';
+                euCup = 'H';
+                frCup = 'H';
+                auCup = 'G';
+            } else if (difference < 9.5) {
+                usCup = 'I';
+                ukCup = 'G';
+                euCup = 'I';
+                frCup = 'I';
+                auCup = 'H';
+            } else {
+                usCup = 'J+';
+                ukCup = 'GG+';
+                euCup = 'J+';
+                frCup = 'J+';
+                auCup = 'I+';
+            }
+
+            // Calculate band sizes for different systems
+            const usBand = bandSize;
+            const ukBand = bandSize;
+            const euBand = bandSize + 22; // EU adds ~22 to band size
+            const frBand = bandSize + 15; // FR adds ~15 to band size
+            const auBand = bandSize;
+
+            return {
+                us: { band: usBand, cup: usCup },
+                uk: { band: ukBand, cup: ukCup },
+                eu: { band: euBand, cup: euCup },
+                fr: { band: frBand, cup: frCup },
+                au: { band: auBand, cup: auCup }
+            };
+        }
+
+        function displayResults(sizes) {
+            const resultsContainer = document.getElementById('size-results');
+            resultsContainer.innerHTML = `
+                <div class="size-system">
+                    <div class="system-name">US/Canada</div>
+                    <div class="system-size">${sizes.us.band}${sizes.us.cup}</div>
+                </div>
+                <div class="size-system">
+                    <div class="system-name">UK</div>
+                    <div class="system-size">${sizes.uk.band}${sizes.uk.cup}</div>
+                </div>
+                <div class="size-system">
+                    <div class="system-name">EU</div>
+                    <div class="system-size">${sizes.eu.band}${sizes.eu.cup}</div>
+                </div>
+                <div class="size-system">
+                    <div class="system-name">FR/BE/ES</div>
+                    <div class="system-size">${sizes.fr.band}${sizes.fr.cup}</div>
+                </div>
+                <div class="size-system">
+                    <div class="system-name">Australia/NZ</div>
+                    <div class="system-size">${sizes.au.band}${sizes.au.cup}</div>
+                </div>
+            `;
+        }
+    </script><br>
+    <div class="calculator-container">
+    <h2>What Is a Bra Size Calculator?</h2>
+    <p>Using basic body measurements, usually your bust size (the largest area of your chest) and band size (underbust), a bra size calculator is an online application that helps you find your exact bra size. The calculator calculates your band and cup size, such as 34B or 36D, based on these figures.</p>
+    <h2>how to measure bra size?</h2>
+    <p>It is quick and simple to use a bra size calculator. Typically, you must accomplish the following:</p>
+    <h3>1. Measure your band size</h3>
+    <ul>
+  <li>Stand straight and wrap a soft measuring tape around your ribcage, just under your bust.</li>
+  <li>Make sure the tape is snug but not tight.</li>
+  <li>Round to the nearest whole number.</li>
+</ul>
+  <h3>2. Measure your bust size</h3>
+</ul>
+<ul>
+<li>Wrap the tape around the fullest part of your bust (usually at nipple level).</li>
+<li>Keep the tape level and not too tight or too loose.</li>
+<li>Again, round to the nearest whole number.</li>
+</ul>
+<h3>3. Enter your measurements</h3>
+<ul>
+<li>Input these numbers into the bra size calculator.</li>
+<li>The calculator will compute your band and cup size using standard formulas.</li>
+</ul>
+</div>
+</body>
+</html>
